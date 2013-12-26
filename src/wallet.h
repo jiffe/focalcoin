@@ -14,16 +14,17 @@ class FCWallet {
 		std::map <std::string, FCWalletAccount> accounts;
 		
 		bool loadAccounts();
+		bool loadAddresses();
 		
 	public:
 		FCWallet() { this->balance = 0; }
 		bool init();
 		uint64_t getBalance();
 		double getFormattedBalance();
-		std::string createNewAddress(std::string accountName, bool primary = false);
+		std::string createNewAddress(std::string accountName, std::string notes, bool primary = false);
 		Json::Value getAccounts();
-		Json::Value getAccountAddresses(std::string accountName);
-		std::string getAccountAddress(std::string accountName, bool rebalance);
+		Json::Value getAccountAddresses(std::string accountName, bool verbose, bool display);
+		std::string getAccountAddress(std::string accountName, std::string notes, bool rebalance);
 		
 };
 

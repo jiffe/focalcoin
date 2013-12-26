@@ -48,6 +48,7 @@ namespace FC {
 	// Some miscellaneous functions
 	std::string expandUser(std::string path);
 	std::string buildVersion(int major, int minor, int revision, bool flat = false);
+	std::string timestampToString(unsigned int timestamp);
 	
 	// Conversion functions
 	std::string numberToHex(uint32_t value);

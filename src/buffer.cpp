@@ -31,11 +31,9 @@ void FCBuffer::reset() {
 void FCBuffer::write(char *buffer, int bufferSize) {
 	this->buffer = (char *)realloc(this->buffer, this->bufferSize + bufferSize + 1);
 	memcpy(this->buffer + this->bufferSize, buffer, bufferSize);
-	printf("Write %d bytes at offset %d\n", bufferSize, this->bufferSize);
 	this->bufferPtr = this->buffer;
 	this->bufferSize += bufferSize;
 	this->buffer[this->bufferSize] = 0;
-	printf("BUFFER %s\n", this->buffer);
 }
 
 

@@ -163,12 +163,10 @@ int FCNetwork::callback_web(struct libwebsocket_context *context, struct libwebs
 				break;
 			}
 			case LWS_CALLBACK_HTTP_BODY:
-			printf("HTTP BODY %d\n", len);
 				session->web->write((char *)in, len, FCBUFFERTYPE_INPUT);
 				
 				break;
 			case LWS_CALLBACK_HTTP_BODY_COMPLETION:
-			printf("HTTP BODY COMPLETION\n");
 				session->web->setContentType(FC_RESOURCETYPE_JSON);
 				queue.enqueue(session->web);
 				
@@ -259,7 +257,6 @@ int FCNetwork::callback_jsonrpc(struct libwebsocket_context *context, struct lib
 			case LWS_CALLBACK_CLIENT_WRITEABLE:
 			case LWS_CALLBACK_SERVER_WRITEABLE:
 				if(session && session->websocket && session->websocket->isWritable()) {
-				//printf("LWS_CALLBACK_SERVER_WRITEABLE %d\n", session->rpc->isWritable());
 					session->websocket->encapsulate();
 					do {
 						int bytes_written = libwebsocket_write(wsi, (unsigned char *)session->websocket->getRawBuffer(FCBUFFERTYPE_OUTPUT), (size_t)session->websocket->getBufferSize(FCBUFFERTYPE_OUTPUT), LWS_WRITE_TEXT);

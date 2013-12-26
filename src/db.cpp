@@ -4,6 +4,7 @@
 #include "config.h"
 #include "db.h"
 #include "exception.h"
+#include "leveldb/write_batch.h"
 
 
 extern FCConfig config;
@@ -29,6 +30,17 @@ bool FCDB::init() {
 		
 		boost::filesystem::path dataPath = FC::expandUser(config.getString("datapath", ""));
 		boost::filesystem::path dbPath = dataPath / "db";
+		
+		if(!boost::filesystem::exists(dbPath)) {
+			if(!boost::filesystem::create_directories(dbPath)) {
+				throw FCException("Failed to create database path directory structure");
+			}
+		}
+		else {
+			if(!boost::filesystem::is_directory(dbPath)) {
+				throw FCException("Invalid database path, not a directory");
+			}
+		}
 		
 		options.create_if_missing = true;
 		leveldb::Status status = leveldb::DB::Open(options, dbPath.string(), &this->db);
@@ -91,5 +103,58 @@ int FCDB::read(std::string key, int &value) {
 	catch(FCException &e) {
 		return e.getType();
 	}
+}
+
+
+/***************************************************************************************************
+*
+*
+***************************************************************************************************/
+leveldb::Iterator *FCDB::iterator() {
+	return this->db->NewIterator(leveldb::ReadOptions());
+}
+
+
+/***************************************************************************************************
+*
+*
+***************************************************************************************************/
+int FCDB::write(std::string key, std::string value) {
+	this->batchItems.push_back(FCDBBatchItem(key, value.c_str(), value.size() + 1));
+	return 0;
+}
+
+
+/***************************************************************************************************
+*
+*
+***************************************************************************************************/
+int FCDB::write(std::string key, Json::Value value) {
+	Json::FastWriter writer;
+	return this->write(key, writer.write(value));
+}
+
+
+/***************************************************************************************************
+*
+*
+***************************************************************************************************/
+int FCDB::writeBatch() {
+	leveldb::WriteBatch batch;
+	
+	for(int i = 0; i < this->batchItems.size(); i++) {
+		batch.Put(this->batchItems[i].getKey(), leveldb::Slice(this->batchItems[i].getValue(), this->batchItems[i].getValueSize()));
+	}
+	
+	leveldb::WriteOptions options = leveldb::WriteOptions();
+	options.sync = true;
+	leveldb::Status status = this->db->Write(options, &batch);
+	if(!status.ok()) {
+		return -1;
+	}
+	
+	
+	
+	return 0;
 }
 

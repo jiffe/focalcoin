@@ -7,7 +7,8 @@
 #include "exception.h"
 
 
-extern leveldb::DB* db;
+//extern leveldb::DB* db;
+extern FCDB db;
 
 
 /***************************************************************************************************
@@ -22,9 +23,13 @@ bool FCWallet::init() {
 		}
 		
 		if(this->accounts.size() == 0) {
-			if(this->createNewAddress("", true) == "") {
+			if(this->createNewAddress("", "Internally generated address", true) == "") {
 				throw FCException();
 			}
+		}
+		
+		if(this->loadAddresses() == false) {
+			throw FCException();
 		}
 		
 		return true;
@@ -41,15 +46,15 @@ bool FCWallet::init() {
 ***************************************************************************************************/
 bool FCWallet::loadAccounts() {
 	try {
-		leveldb::Iterator* it = db->NewIterator(leveldb::ReadOptions());
-		for(it->Seek("A#"); it->Valid(); it->Next()) {
+		leveldb::Iterator *it = db.iterator();
+		for(it->Seek("A#"); it->Valid() && it->key().ToString().substr(0, 2) == "A#"; it->Next()) {
 			std::string accountName = it->key().ToString().substr(2);
 			std::string accountJSON = it->value().ToString();
 			
+			printf("%s\n", it->key().ToString().c_str());
+			
 			this->accounts[accountName] = FCWalletAccount(accountName, accountJSON);
-			if(this->accounts[accountName].loadAddresses() == false) {
-				throw FCException();
-			}
+			printf("add acct '%s'\n", accountName.c_str());
 		}
 		
 		return true;
@@ -64,14 +69,48 @@ bool FCWallet::loadAccounts() {
 *
 *
 ***************************************************************************************************/
-std::string FCWallet::createNewAddress(std::string accountName, bool primary) {
+bool FCWallet::loadAddresses() {
+	try {
+		leveldb::Iterator *it = db.iterator();
+		for(it->Seek("A."); it->Valid() && it->key().ToString().substr(0, 2) == "A."; it->Next()) {
+			std::string addressPublicKey = it->key().ToString().substr(2);
+			std::string addressJSON = it->value().ToString();
+			
+			FCWalletAddress address = FCWalletAddress(addressJSON);
+			
+			printf("load address acct '%s'\n", addressJSON.c_str());
+			
+			std::map<std::string, FCWalletAccount>::const_iterator it = this->accounts.find(address.getAccountName());
+			if(it == this->accounts.end()) {
+				printf("here\n");
+				this->accounts[address.getAccountName()] = FCWalletAccount(address.getAccountName());
+				db.write("A#" + address.getAccountName(), this->accounts[address.getAccountName()].getJSON());
+			}
+			
+			this->accounts[address.getAccountName()].importAddress(address);
+		}
+		
+		return true;
+	}
+	catch(FCException &e) {
+		return false;
+	}
+}
+
+
+/***************************************************************************************************
+*
+*
+***************************************************************************************************/
+std::string FCWallet::createNewAddress(std::string accountName, std::string notes, bool primary) {
 	try {
 		std::map<std::string, FCWalletAccount>::const_iterator it = this->accounts.find(accountName);
 		if(it == this->accounts.end()) {
 			this->accounts[accountName] = FCWalletAccount(accountName);
+			db.write("A#" + accountName, this->accounts[accountName].getJSON());
 		}
 		
-		return this->accounts[accountName].createNewAddress(primary);
+		return this->accounts[accountName].createNewAddress(notes, primary);
 	}
 	catch(FCException &e) {
 		return "";
@@ -116,10 +155,10 @@ Json::Value FCWallet::getAccounts() {
 /***************************************************************************************************
 * 
 ***************************************************************************************************/
-Json::Value FCWallet::getAccountAddresses(std::string accountName) {
+Json::Value FCWallet::getAccountAddresses(std::string accountName, bool verbose, bool display) {
 	std::map<std::string, FCWalletAccount>::const_iterator it = this->accounts.find(accountName);
 	if(it != this->accounts.end()) {
-		return this->accounts[accountName].getAccountAddresses();
+		return this->accounts[accountName].getAccountAddresses(verbose, display);
 	}
 	return Json::Value(Json::arrayValue);
 }
@@ -128,10 +167,10 @@ Json::Value FCWallet::getAccountAddresses(std::string accountName) {
 /***************************************************************************************************
 * 
 ***************************************************************************************************/
-std::string FCWallet::getAccountAddress(std::string accountName, bool rebalance) {
+std::string FCWallet::getAccountAddress(std::string accountName, std::string notes, bool rebalance) {
 	std::map<std::string, FCWalletAccount>::const_iterator it = this->accounts.find(accountName);
 	if(it == this->accounts.end() || (rebalance && this->accounts[accountName].getBalance())) {
-		return this->createNewAddress(accountName, true);
+		return this->createNewAddress(accountName, notes, true);
 	}
 	return this->accounts[accountName].getPrimaryAddress();
 }

@@ -5,13 +5,14 @@
 #include <openssl/bn.h>
 #include "walletaddress.h"
 #include "uint256.h"
+#include "exception.h"
 
 
 /***************************************************************************************************
 *
 *
 ***************************************************************************************************/
-FCWalletAddress::FCWalletAddress() {
+FCWalletAddress::FCWalletAddress(std::string accountName, std::string notes) {
 	unsigned char publicBuffer[65], privateBuffer[32];
 	EC_KEY *eckey = NULL;
 	EC_POINT *pub_key = NULL;
@@ -58,6 +59,74 @@ start:
 	BN_CTX_free(ctx);
 	
 	this->balance = 0;
+	this->accountName = accountName;
+	this->notes = notes;
+	this->createDate = time(0);
+	this->lastDepositDate = 0;
+	this->lastWithdrawalDate = 0;
+}
+
+
+/***************************************************************************************************
+*
+*
+***************************************************************************************************/
+FCWalletAddress::FCWalletAddress(std::string addressJSON) {
+	Json::Reader reader;
+	Json::Value json;
+	
+	this->accountName = "";
+	this->privKey = "";
+	this->pubKey = "";
+	this->notes = "";
+	this->balance = 0;
+	
+	if(!reader.parse(addressJSON, json)) {
+		return;
+	}
+	
+	if(json["accountName"].isString()) {
+		this->accountName = json["accountName"].asString();
+	}
+	if(json["public"].isString()) {
+		this->pubKey = json["public"].asString();
+	}
+	if(json["public"].isString()) {
+		this->privKey = json["public"].asString();
+	}
+	if(json["balance"].isInt()) {
+		this->balance = json["balance"].asUInt64();
+	}
+	if(json["createDate"].isInt()) {
+		this->createDate = json["createDate"].asUInt();
+	}
+	if(json["lastDepositDate"].isInt()) {
+		this->lastDepositDate = json["lastDepositDate"].asUInt();
+	}
+	if(json["lastWithdrawalDate"].isInt()) {
+		this->lastWithdrawalDate = json["lastWithdrawalDate"].asUInt();
+	}
+	if(json["notes"].isString()) {
+		this->privKey = json["notes"].asString();
+	}
+}
+
+
+/***************************************************************************************************
+*
+*
+***************************************************************************************************/
+Json::Value FCWalletAddress::getJSON(bool display) {
+	Json::Value json = Json::Value(Json::objectValue);
+	json["accountName"] = this->accountName;
+	json["public"] = this->pubKey;
+	json["private"] = this->privKey;
+	json["balance"] = display ? (double)this->balance / 1000000.0 : Json::UInt64(this->balance);
+	json["notes"] = this->notes;
+	json["createDate"] = display ? Json::Value(FC::timestampToString(this->createDate)) : Json::Value(this->createDate);
+	json["lastDepositDate"] = display ? Json::Value(FC::timestampToString(this->lastDepositDate)) : Json::UInt(this->lastDepositDate);
+	json["lastWithdrawalDate"] = display ? Json::Value(FC::timestampToString(this->lastWithdrawalDate)) : Json::UInt(this->lastWithdrawalDate);
+	return json;
 }
 
 

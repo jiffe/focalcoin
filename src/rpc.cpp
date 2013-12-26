@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <algorithm>
 #include "rpc.h"
 #include "peers.h"
 #include "inventory.h"
@@ -155,11 +156,22 @@ bool FCRPC::handleGetBlockCount(Json::Value &request, Json::Value &response) {
 *
 ***************************************************************************************************/
 bool FCRPC::handleGetAddressesByAccount(Json::Value &request, Json::Value &response) {
+	std::string account = "";
+	bool verbose = false;
 	
-	// error checking todo
+	if(request["params"].size() > 0) {
+		account = request["params"][0].asString();
+	}
+	if(request["params"].size() > 1) {
+		std::string w = request["params"][1].asString();
+		std::transform(w.begin(), w.end(), w.begin(), ::tolower);
+		if(w == "true") {
+			verbose = true;
+		}
+	}
 	
 	response["error"] = Json::Value(Json::nullValue);
-	response["result"] = inv.getAccountAddresses(request["params"][0].asString());
+	response["result"] = inv.getAccountAddresses(account, verbose, true);
 	
 	return true;
 }
@@ -170,16 +182,18 @@ bool FCRPC::handleGetAddressesByAccount(Json::Value &request, Json::Value &respo
 *
 ***************************************************************************************************/
 bool FCRPC::handleGetNewAddress(Json::Value &request, Json::Value &response) {
+	std::string account = "";
+	std::string notes = "Internally generated address";
 	
-	// error checking todo
+	if(request["params"].size() > 0) {
+		account = request["params"][0].asString();
+	}
+	if(request["params"].size() > 1) {
+		notes = request["params"][1].asString();
+	}
 	
 	response["error"] = Json::Value(Json::nullValue);
-	if(request["params"].size()) {
-		response["result"] = inv.getNewAddress(request["params"][0].asString());
-	}
-	else {
-		response["result"] = inv.getNewAddress("");
-	}
+	response["result"] = inv.getNewAddress(account, notes);
 	
 	return true;
 }

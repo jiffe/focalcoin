@@ -190,8 +190,8 @@ Json::Value FCInventory::getAccounts() {
 /***************************************************************************************************
 * 
 ***************************************************************************************************/
-Json::Value FCInventory::getAccountAddresses(std::string accountName) {
-	return this->wallet.getAccountAddresses(accountName);
+Json::Value FCInventory::getAccountAddresses(std::string accountName, bool verbose, bool display) {
+	return this->wallet.getAccountAddresses(accountName, verbose, display);
 }
 
 
@@ -206,8 +206,8 @@ double FCInventory::getBalance() {
 /***************************************************************************************************
 * 
 ***************************************************************************************************/
-std::string FCInventory::getNewAddress(std::string accountName) {
-	return this->wallet.createNewAddress(accountName);
+std::string FCInventory::getNewAddress(std::string accountName, std::string notes) {
+	return this->wallet.createNewAddress(accountName, notes);
 }
 
 
@@ -215,7 +215,7 @@ std::string FCInventory::getNewAddress(std::string accountName) {
 * 
 ***************************************************************************************************/
 std::string FCInventory::getAccountAddress(std::string accountName, bool rebalance) {
-	return this->wallet.getAccountAddress(accountName, rebalance);
+	return this->wallet.getAccountAddress(accountName, "Internally generated address", rebalance);
 }
 
 
@@ -230,18 +230,6 @@ bool FCInventory::init() {
 		}
 		
 		std::cout << dataPath.string() << std::endl;
-		
-		if(!boost::filesystem::exists(dataPath)) {
-		std::cout << dataPath.string() << std::endl;
-			if(!boost::filesystem::create_directories(dataPath)) {
-				throw FCException("Failed to create data path directory structure");
-			}
-		}
-		else {
-			if(!boost::filesystem::is_directory(dataPath)) {
-				throw FCException("Invalid data path, not a directory");
-			}
-		}
 		
 		if(this->wallet.init() == false) {
 			throw FCException("");

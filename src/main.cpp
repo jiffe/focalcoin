@@ -28,7 +28,8 @@ FCNetwork network;
 FCQueue queue;
 
 // Database Access
-leveldb::DB* db;
+//leveldb::DB* db;
+FCDB db;
 
 
 int main(int argc, char **argv) {
@@ -42,6 +43,10 @@ int main(int argc, char **argv) {
 		return -1;
 	}
 	
+	if(db.init() == false) {
+		return -1;
+	}
+	/*
 	boost::filesystem::path dataPath = FC::expandUser(config.getString("datapath", ""));
 	boost::filesystem::path dbPath = dataPath / "db";
 	
@@ -51,6 +56,7 @@ int main(int argc, char **argv) {
 	if(!status.ok()) {
 		throw FCException("Failed to create/open database under '%s': %s", dbPath.string().c_str(), status.ToString().c_str());
 	}
+	*/
 	
 	// Initialize block chain
 	if(inv.init() == false) {

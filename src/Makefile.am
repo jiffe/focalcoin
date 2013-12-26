@@ -42,6 +42,7 @@ focalcoind_SOURCES = 	main.cpp \
 						transaction.cpp \
 						transactionin.cpp \
 						transactionout.cpp \
-						merkletree.cpp
+						merkletree.cpp \
+						dbbatchitem.cpp
 						
 

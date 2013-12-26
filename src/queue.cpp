@@ -3,9 +3,11 @@
 #include "exception.h"
 #include "queue.h"
 #include "rpc.h"
+#include "db.h"
 
 
 extern int exit_signal;
+extern FCDB db;
 
 
 /***************************************************************************************************
@@ -31,6 +33,8 @@ void FCQueue::run() {
 		if(item) {
 			item->handle();
 		}
+		
+		db.writeBatch();
 		
 		usleep(100000);
 	}

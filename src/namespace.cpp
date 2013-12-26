@@ -3,6 +3,7 @@
 #include <string.h>
 #include <openssl/sha.h>
 #include <iomanip>
+#include <ctime>
 #include "namespace.h"
 
 
@@ -60,6 +61,21 @@ namespace FC {
 			sprintf(buffer, "%d.%02d.%02d", major, minor, revision);
 		}
 		
+		return std::string(buffer);
+	}
+	
+	
+	/***************************************************************************************************
+	*
+	*
+	***************************************************************************************************/
+	std::string timestampToString(unsigned int timestamp) {
+		if(timestamp == 0) return "Never";
+		std::time_t now = timestamp;
+		std::tm *ptm = std::localtime(&now);
+		char buffer[32];
+		// Format: Mo, 15.06.2009 20:20:00
+		std::strftime(buffer, 32, "%Y-%m-%d %H:%M:%S %z", ptm);
 		return std::string(buffer);
 	}
 	

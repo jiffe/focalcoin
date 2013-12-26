@@ -29,7 +29,7 @@ class FCInventory {
 		Json::Value getBlockTemplate();
 		Json::Value getAccounts();
 		double getBalance();
-		Json::Value getAccountAddresses(std::string accountName);
+		Json::Value getAccountAddresses(std::string accountName, bool verbose, bool display);
 		
 		int getCurrentHeight(bool locked = false);
 		unsigned int getCurrentNBits();
@@ -37,7 +37,7 @@ class FCInventory {
 		uint256_t getCurrentTarget();
 		uint64_t getCurrentReward();
 		std::string getCurrentWork();
-		std::string getNewAddress(std::string accountName);
+		std::string getNewAddress(std::string accountName, std::string notes);
 		std::string getAccountAddress(std::string accountName, bool rebalance = false);
 };
 
