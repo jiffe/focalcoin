@@ -1,13 +1,8 @@
 #include <stdio.h>
 #include <unistd.h>
-#include "exception.h"
+#include "global.h"
 #include "queue.h"
 #include "rpc.h"
-#include "db.h"
-
-
-extern int exit_signal;
-extern FCDB db;
 
 
 /***************************************************************************************************

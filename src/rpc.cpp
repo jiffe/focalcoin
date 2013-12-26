@@ -1,18 +1,8 @@
 #include <stdio.h>
 #include <algorithm>
-#include "rpc.h"
-#include "peers.h"
-#include "inventory.h"
-#include "wallet.h"
-#include "config.h"
 #include "resources.h"
-#include "exception.h"
-
-
-extern FCConfig config;
-extern FCInventory inv;
-extern FCPeers peers;
-extern FCWallet wallet;
+#include "global.h"
+#include "rpc.h"
 
 
 /***************************************************************************************************

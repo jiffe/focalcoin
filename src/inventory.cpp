@@ -2,11 +2,7 @@
 #include <leveldb/db.h>
 #include <math.h>
 #include "inventory.h"
-#include "config.h"
-#include "exception.h"
-
-
-extern FCConfig config;
+#include "global.h"
 
 
 /***************************************************************************************************

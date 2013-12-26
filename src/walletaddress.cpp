@@ -5,7 +5,7 @@
 #include <openssl/bn.h>
 #include "walletaddress.h"
 #include "uint256.h"
-#include "exception.h"
+#include "global.h"
 
 
 /***************************************************************************************************

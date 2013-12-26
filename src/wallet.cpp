@@ -3,12 +3,7 @@
 #include <iostream>
 #include <iomanip>
 #include "wallet.h"
-#include "db.h"
-#include "exception.h"
-
-
-//extern leveldb::DB* db;
-extern FCDB db;
+#include "global.h"
 
 
 /***************************************************************************************************

@@ -1,13 +1,8 @@
 #include <boost/filesystem.hpp>
 #include <string>
 #include <iostream>
-#include "config.h"
-#include "db.h"
-#include "exception.h"
 #include "leveldb/write_batch.h"
-
-
-extern FCConfig config;
+#include "global.h"
 
 
 /***************************************************************************************************

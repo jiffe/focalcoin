@@ -2,10 +2,7 @@
 #include <stdint.h>
 #include "walletaccount.h"
 #include "uint256.h"
-#include "db.h"
-
-
-extern FCDB db;
+#include "global.h"
 
 
 /***************************************************************************************************
