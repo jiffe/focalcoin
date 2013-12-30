@@ -5,8 +5,7 @@
 
 
 /***************************************************************************************************
-*
-*
+* Initialize the websocket portion of this object
 ***************************************************************************************************/
 FCWebSocket::FCWebSocket() : FCRPC() {
 	this->encapsulated = false;
@@ -14,8 +13,9 @@ FCWebSocket::FCWebSocket() : FCRPC() {
 
 
 /***************************************************************************************************
-*
-*
+* Websocket encapsulation is handled elsewhere, we just need to create the buffer space for it to
+* use
+* Returns a boolean status
 ***************************************************************************************************/
 bool FCWebSocket::encapsulate() {
 	try {
