@@ -92,7 +92,7 @@ uint64_t FCBlock::getReward() {
 *
 *
 ***************************************************************************************************/
-std::string FCBlock::buildCoinbase(std::string extranonce) {
+std::string FCBlock::buildCoinbaseHash(std::string extranonce) {
 	std::string coinbase = this->coinbase.get(0) + extranonce + this->coinbase.get(1);
 	return FC::doublesha256(coinbase);
 }
@@ -134,9 +134,11 @@ uint256_t FCBlock::getHash() {
 ***************************************************************************************************/
 std::string FCBlock::getWork(FCBlock *prevBlock) {
 	char buffer[80];
+	uint32_t tm = time(0);
 	
-	std::string coinbaseHash = this->buildCoinbase(FC::numberToHex(this->extranonce++));
-	this->serializeHeader(prevBlock, coinbaseHash, time(0), 0, buffer);
+	std::string coinbaseHash = this->buildCoinbaseHash(FC::numberToHex(this->extranonce++));
+	//std::string coinbaseHash = this->buildCoinbaseHash(FC::numberToHex(this->extranonce));
+	this->serializeHeader(prevBlock, coinbaseHash, tm, 0, buffer);
 	
 	return FC::bufferToHex((unsigned char *)buffer, 80) + "000000800000000000000000000000000000000000000000000000000000000000000000000000000000000080020000";
 }

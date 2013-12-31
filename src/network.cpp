@@ -136,7 +136,7 @@ int FCNetwork::callback_web(struct libwebsocket_context *context, struct libwebs
 				// todo free
 				break;
 			case LWS_CALLBACK_HTTP: {
-				dump_handshake_info(wsi);
+				//dump_handshake_info(wsi);
 				
 				if(len < 1) {
 					libwebsockets_return_http_status(context, wsi, HTTP_STATUS_BAD_REQUEST, NULL);

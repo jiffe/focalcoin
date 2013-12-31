@@ -130,6 +130,21 @@ namespace FC {
 	*
 	*
 	***************************************************************************************************/
+	std::string swapEndian(std::string number) {
+		std::string swappedNumber = "";
+		
+		for(int i = number.size() - 2; i >= 0; i-=2) {
+			swappedNumber += number.substr(i, 2);
+		}
+		
+		return swappedNumber;
+	}
+	
+	
+	/***************************************************************************************************
+	*
+	*
+	***************************************************************************************************/
 	std::string bufferToHex(const unsigned char *buffer, unsigned int buffer_len) {
 		std::string hex = "";
 		char c[3];
@@ -305,9 +320,17 @@ namespace FC {
 			sprintf(c, "%02x", size);
 			hex = std::string(c);
 		}
-		hex += str;
+		else if(size < 0x10000) {
+			//return chr(253) + struct.pack("<H", len(s)) + s
+		}
+		else if(size < 0x100000000L) {
+			//return chr(254) + struct.pack("<I", len(s)) + s
+		}
+		else {
+			//return chr(255) + struct.pack("<Q", len(s)) + s
+		}
 		
-		return hex;
+		return hex + str;
 	}
 	
 	

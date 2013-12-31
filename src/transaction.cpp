@@ -21,7 +21,7 @@ FCTransaction::FCTransaction() {
 ***************************************************************************************************/
 bool FCTransaction::build(std::string walletAddress, uint64_t coinbasevalue, std::string flags, unsigned int height, std::string data) {
 	try {
-		
+		uint32_t timestamp = time(0);
 		// self.nVersion = 1
         // self.vin = []
         // self.vout = []
@@ -29,7 +29,7 @@ bool FCTransaction::build(std::string walletAddress, uint64_t coinbasevalue, std
         // self.sha256 = None
 		
 		this->txin.push_back(FCTransactionIn());
-		if(this->txin[0].buildScriptSig(height, flags, time(0)) == false) {
+		if(this->txin[0].buildScriptSig(height, flags, timestamp) == false) {
 			throw FCException("Failed to build TXIn Script Sig");
 		}
 		
@@ -63,9 +63,11 @@ std::string FCTransaction::serialize() {
 	try {
 		std::string value = "";
 		
-		value += FC::numberToHex(this->version);
+		value += FC::swapEndian(FC::numberToHex(this->version));
+		//std::cout << "TXIN " << FC::serializeVector(this->txin) << std::endl;
 		value += FC::serializeVector(this->txin);
 		
+		//std::cout << "TXOUT " << FC::serializeVector(this->txout) << std::endl;
 		value += FC::serializeVector(this->txout);
 		value += FC::numberToHex(this->lockTime);
 		

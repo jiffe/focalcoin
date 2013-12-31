@@ -20,7 +20,7 @@ class FCBlock: private FCMerkleTree {
 		FCTransaction coinbase;
 		FCMerkleTree merkle;
 		
-		std::string buildCoinbase(std::string extranonce);
+		std::string buildCoinbaseHash(std::string extranonce);
 		
 	public:
 		FCBlock();

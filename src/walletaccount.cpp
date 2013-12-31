@@ -15,6 +15,7 @@ FCWalletAccount::FCWalletAccount(std::string accountName) {
 	this->createDate = time(0);
 	this->lastDepositDate = 0;
 	this->lastWithdrawalDate = 0;
+	this->primaryAddress = "";
 }
 
 
@@ -72,6 +73,9 @@ Json::Value FCWalletAccount::getJSON() {
 ***************************************************************************************************/
 void FCWalletAccount::importAddress(FCWalletAddress address) {
 	this->addresses[address.getPublicKey()] = address;
+	if(this->primaryAddress == "") {
+		this->primaryAddress = address.getPublicKey();
+	}
 }
 
 
@@ -83,7 +87,7 @@ std::string FCWalletAccount::createNewAddress(std::string notes, bool primary) {
 	FCWalletAddress address(this->accountName, notes);
 
 	this->addresses[address.getPublicKey()] = address;
-	if(primary) {
+	if(primary || this->primaryAddress == "") {
 		this->primaryAddress = address.getPublicKey();
 	}
 	db.write("A." + address.getPublicKey(), address.getJSON());

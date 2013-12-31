@@ -21,7 +21,7 @@
 #define FC_DEFAULT_DEBUG "0"
 #define FC_DEFAULT_USERNAME "focalcoin"
 
-#define FCDEFAULT_NBITS 0x1e00ffff
+#define FCDEFAULT_NBITS 0x1f00ffff
 
 #define FC_VERSION_MAJOR 0
 #define FC_VERSION_MINOR 0
@@ -54,6 +54,7 @@ namespace FC {
 	std::string numberToHex(uint32_t value);
 	std::string numberToHex(uint64_t number);
 	std::string numberToHex(uint256_t number);
+	std::string swapEndian(std::string number);
 	char hexToChar(std::string hex);
 	std::string doublesha256(std::string str);
 	std::string bufferToHex(const unsigned char *buffer, unsigned int buffer_len);

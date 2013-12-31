@@ -197,8 +197,13 @@ bool FCRPC::handleGetAccountAddress(Json::Value &request, Json::Value &response)
 	
 	// error checking todo
 	
-	response["error"] = Json::Value(Json::nullValue);
-	response["result"] = inv.getAccountAddress(request["params"][0].asString(), true);
+	if(request["params"].size() > 0) {
+		printf("GETWORK WITH PARAMS\n");
+	}
+	else {
+		response["error"] = Json::Value(Json::nullValue);
+		response["result"] = inv.getAccountAddress(request["params"][0].asString(), true);
+	}
 	
 	return true;
 }
@@ -264,6 +269,7 @@ void FCRPC::handle() {
 	
 	bool found = false;
 	for(const FCRPCCommand *cmd = rpccommands; cmd->name != ""; cmd++) {
+		if(method != "getwork") printf("Calling method %s\n", method.c_str());
 		if(method == cmd->name) {
 			cmd->handler(request, response);
 			found = true;
@@ -274,6 +280,7 @@ void FCRPC::handle() {
 		response["error"] = Json::Value(Json::objectValue);
 		response["error"]["code"] = -32601;
 		response["error"]["message"] = "Method not found";
+		printf("METHOD %s not found\n", method.c_str());
 	}
 	
 	return this->write(response, FCBUFFERTYPE_OUTPUT);

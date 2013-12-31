@@ -20,7 +20,7 @@ FCTransactionOut::FCTransactionOut() {
 ***************************************************************************************************/
 bool FCTransactionOut::buildScriptPubKey(std::string walletAddress, uint64_t coinbasevalue) {
 	try {
-		
+		//std::cout << "wallet address " << walletAddress << std::endl;
 		this->coinbasevalue = coinbasevalue;
 		this->scriptPubKey = FC::scriptToAddress(walletAddress);
 		
@@ -39,7 +39,7 @@ bool FCTransactionOut::buildScriptPubKey(std::string walletAddress, uint64_t coi
 std::string FCTransactionOut::serialize() {
 	std::string hex = "";
 	
-	hex += FC::numberToHex(this->coinbasevalue);
+	hex += FC::swapEndian(FC::numberToHex(this->coinbasevalue));
 	hex += FC::serializeHexString(this->scriptPubKey);
 	
 	return hex;

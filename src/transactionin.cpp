@@ -25,12 +25,14 @@ FCTransactionIn::FCTransactionIn() {
 bool FCTransactionIn::buildScriptSig(unsigned int height, std::string flags, unsigned int timestamp) {
 	try {
 		
+		flags = "062f503253482f";
+		
 		this->template0 += FC::serializeNumber(height);
 		this->template0 += flags;
 		this->template0 += FC::serializeNumber(timestamp);
 		this->template0 += "08";
 		
-		this->template1 = FC::serializeString("");
+		this->template1 = FC::serializeString("/stratumPool/");
 		
 		this->scriptSig = this->template0 + "f000000ff111111f" + this->template1;
 		
@@ -60,6 +62,7 @@ std::string FCTransactionIn::serialize() {
 	
 	hex += FC::numberToHex(this->prevout_hash);
 	hex += FC::numberToHex(this->prevout_n);
+	//printf("SCRIPT SIG %s\n", this->scriptSig.c_str());
 	hex += FC::serializeHexString(this->scriptSig);
 	hex += FC::numberToHex(this->nSequence);
 	

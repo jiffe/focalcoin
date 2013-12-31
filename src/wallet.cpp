@@ -12,7 +12,6 @@
 ***************************************************************************************************/
 bool FCWallet::init() {
 	try {
-		
 		if(this->loadAccounts() == false) {
 			throw FCException();
 		}
@@ -46,10 +45,10 @@ bool FCWallet::loadAccounts() {
 			std::string accountName = it->key().ToString().substr(2);
 			std::string accountJSON = it->value().ToString();
 			
-			printf("%s\n", it->key().ToString().c_str());
+			//printf("%s\n", it->key().ToString().c_str());
 			
 			this->accounts[accountName] = FCWalletAccount(accountName, accountJSON);
-			printf("add acct '%s'\n", accountName.c_str());
+			//printf("add acct '%s'\n", accountName.c_str());
 		}
 		
 		return true;
@@ -73,15 +72,15 @@ bool FCWallet::loadAddresses() {
 			
 			FCWalletAddress address = FCWalletAddress(addressJSON);
 			
-			printf("load address acct '%s'\n", addressJSON.c_str());
+			//printf("load address acct '%s'\n", addressJSON.c_str());
 			
 			std::map<std::string, FCWalletAccount>::const_iterator it = this->accounts.find(address.getAccountName());
 			if(it == this->accounts.end()) {
-				printf("here\n");
 				this->accounts[address.getAccountName()] = FCWalletAccount(address.getAccountName());
 				db.write("A#" + address.getAccountName(), this->accounts[address.getAccountName()].getJSON());
 			}
 			
+			//printf("here '%s' '%s'\n", address.getPublicKey().c_str(), address.getAccountName().c_str());
 			this->accounts[address.getAccountName()].importAddress(address);
 		}
 		
