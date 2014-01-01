@@ -26,7 +26,7 @@ static const FCConfigItem configItems[] = {
 	{ "audit",			"a",	true,	"",							"Audit the wallet and transaction log against the block chain" },
 	{ "configfile",		"c",	false,	FC_DEFAULT_CONFIG_PATH,		"Path to the configuration file" },
 	{ "datapath",		"d",	false,	FC_DEFAULT_DATA_DIRECTORY,	"Path to the data directory" },
-	{ "debug",			"z",	true,	FC_DEFAULT_DEBUG,			"Debug level [0-3]" },
+	{ "debug",			"z",	false,	FC_DEFAULT_DEBUG,			"Debug level [0-3]" },
 	{ "foreground",		"f",	true,	FC_DEFAULT_FOREGROUND,		"Run in the foreground rather than as a daemon" },
 	{ "help",			"h",	true,	"",							"Display this usage screen" },
 	{ "host",			"m",	false,	"",							"Host/IP address of the "FC_COINNAME" server to send commands to" },
@@ -226,7 +226,7 @@ void FCConfig::printUsage() {
 * ARG argv - List of command line arguments
 ***************************************************************************************************/
 void FCConfig::buildCommand(int argc, char **argv) {
-	int i = 1;
+	int i = optind;
 	for(; i < argc; i++) {
 		if(argv[i][0] != '-') {
 			this->command = std::string(argv[i]);
@@ -237,6 +237,18 @@ void FCConfig::buildCommand(int argc, char **argv) {
 	for(; i < argc; i++) {
 		this->command_args.push_back(std::string(argv[i]));
 	}
+}
+
+
+/***************************************************************************************************
+* Fix config data for internal use
+* RET boolean value
+***************************************************************************************************/
+bool FCConfig::fixConfig() {
+	int debug = this->getInt("debug", 0);
+	char debugValue[3];
+	sprintf(debugValue, "%d", debug + 4);
+	this->items["debug"] = std::string(debugValue);
 }
 
 
@@ -272,6 +284,10 @@ bool FCConfig::build(int argc, char **argv) {
 		
 		if(this->mergeConfig(cnf) == false) {
 			throw FCException();
+		}
+		
+		if(this->fixConfig() == false) {
+			
 		}
 		
 		this->buildCommand(argc, argv);

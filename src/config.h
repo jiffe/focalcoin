@@ -21,6 +21,7 @@ class FCConfig {
 		bool buildConfigFile(std::string configFile, FCConfig &config);
 		void buildCommand(int argc, char **argv);
 		bool mergeConfig(FCConfig &config);
+		bool fixConfig();
 		void printUsage();
 		
 	public:
