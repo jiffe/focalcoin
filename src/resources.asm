@@ -10,4 +10,8 @@ asm(".section .rodata\n.global resource2\nresource2:\n.incbin \"resources/styles
 asm(".section .rodata\n.global resource_size2\nresource_size2:\n.int resource_size2 - resource2");
 asm(".section .rodata\n.global resource_name2\nresource_name2:\n.string \"stylesheets.css\"");
 
-int numResources = 3;
+asm(".section .rodata\n.global resource3\nresource3:\n.incbin \"resources/focalcoin_logo1.png\"");
+asm(".section .rodata\n.global resource_size3\nresource_size3:\n.int resource_size3 - resource3");
+asm(".section .rodata\n.global resource_name3\nresource_name3:\n.string \"focalcoin_logo1.png\"");
+
+int numResources = 4;

@@ -1,10 +1,25 @@
 <html>
 	<head>
-		<title>{{coin_name}} v{{coin_version}} Explorer</title>
+		<title>{{coin_name}}</title>
 		<script type="text/javascript" src="javascript.js"></script>
 		<link rel="stylesheet" type="text/css" href="stylesheets.css" />
 	</head>
-	<body>
-		This is a test
+	<body onLoad="document.getElementById('search_text').focus();">
+		<div style="margin: 10 20 0 20;">
+			<img src="focalcoin_logo1.png" />
+		</div>
+		
+		<!-- Pulled from http://cssdeck.com/labs/css-only-full-width-search-form -->
+		<form action="#" method="post" id="search_form" class="clearfix" onSubmit="return search(this);">
+			<input type="text" size="40" maxlength="150" name="search_text" placeholder="Search block/transaction hashes or addresses" id="search_text" />
+			<input type="submit" value="Search" id="search_button" />
+		</form>
+		
+		<div id="footer">
+			<div style="padding: 5 0 0 0;">
+			{{coin_name}} v{{coin_version}}
+			</div>
+		</div>
+		
 	</body>
 </html>
